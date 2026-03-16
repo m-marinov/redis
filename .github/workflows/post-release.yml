@@ -36,15 +36,17 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H host.redis.io >> ~/.ssh/known_hosts
 
-      - name: Upload tarball
-        run: |
-          if [ "${{ inputs.is_stable_release }}" = "true" ]; then
-            ./utils/releasetools/02_upload_tarball.sh --stable ${{ inputs.version_tag }}
-          else
-            ./utils/releasetools/02_upload_tarball.sh --unstable ${{ inputs.version_tag }}
-          fi
+      - name: Test SSH connection
+        run: ssh -o BatchMode=yes ubuntu@host.redis.io "echo 'SSH connection successful'"
 
-      - name: Verify upload
-        run: |
-          ssh ubuntu@host.redis.io "ls -lh /var/www/download/releases/redis-${{ inputs.version_tag }}.tar.gz"
-
+#      - name: Upload tarball
+#        run: |
+#          if [ "${{ inputs.is_stable_release }}" = "true" ]; then
+#            ./utils/releasetools/02_upload_tarball.sh --stable ${{ inputs.version_tag }}
+#          else
+#            ./utils/releasetools/02_upload_tarball.sh --unstable ${{ inputs.version_tag }}
+#          fi
+#
+#      - name: Verify upload
+#        run: |
+#          ssh ubuntu@host.redis.io "ls -lh /var/www/download/releases/redis-${{ inputs.version_tag }}.tar.gz"

@@ -3,6 +3,12 @@ name: Post-Release Automation
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag (e.g., 7.2.0)'
+        required: true
+        type: string
 
 jobs:
   automate-release-scripts:
@@ -20,7 +26,7 @@ jobs:
       - name: Extract and validate release information
         id: release-info
         env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
+          TAG_NAME: ${{ inputs.version_tag || github.event.release.tag_name }}
           GH_TOKEN: ${{ github.token }}
         run: |
           # Extract tag name from the release event (via env var to prevent injection)

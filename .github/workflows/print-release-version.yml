@@ -1,0 +1,16 @@
+name: Print Release Version
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  print-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print release version
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          echo "Release version: ${TAG_NAME}"
+

@@ -1,0 +1,16 @@
+name: Print Release Link
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  print-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print release link
+        env:
+          RELEASE_URL: ${{ github.event.release.html_url }}
+        run: |
+          echo "Release URL: ${RELEASE_URL}"
+

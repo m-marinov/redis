@@ -23,13 +23,15 @@ then
     exit 1
 fi
 
+REDIS_HASHES_PATH="${REDIS_HASHES_PATH:-../redis-hashes}"
+
 SHA=$(curl -s http://download.redis.io/releases/redis-${VERSION_TAG}.tar.gz | shasum -a 256 | cut -f 1 -d' ')
 ENTRY="hash redis-${VERSION_TAG}.tar.gz sha256 $SHA http://download.redis.io/releases/redis-${VERSION_TAG}.tar.gz"
-echo $ENTRY >> ../redis-hashes/README
+echo $ENTRY >> "${REDIS_HASHES_PATH}/README"
 
 if [ $AUTO_CONFIRM -eq 0 ]; then
     echo "Press any key to commit, Ctrl-C to abort)."
     read yes
 fi
 
-(cd ../redis-hashes; git commit -a -m "${VERSION_TAG} hash."; git push)
+(cd "${REDIS_HASHES_PATH}"; git commit -a -m "${VERSION_TAG} hash."; git push)

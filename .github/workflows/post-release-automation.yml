@@ -140,6 +140,15 @@ jobs:
           REDIS_HASHES_PATH: redis-hashes
         run: ./utils/releasetools/04_release_hash.sh -y "$TAG_NAME"
 
+      - name: Verify SHA256 matches tarball checksum
+        run: |
+          DOWNLOAD_SHA=$(grep "redis-${TAG_NAME}.tar.gz" redis-hashes/README | tail -1 | awk '{print $4}')
+          if [ "${DOWNLOAD_SHA}" != "${SHA256}" ]; then
+            echo "::error::SHA256 mismatch! Download: ${DOWNLOAD_SHA} vs Tarball: ${SHA256}"
+            exit 1
+          fi
+          echo "SHA256 checksums match."
+
   summary-and-notify:
     needs: [extract-release-info, create-tarball, update-release-hashes]
     if: always() && github.repository == 'redis/redis'

@@ -118,19 +118,30 @@ jobs:
   #         # - Download the uploaded tarball
   #         # - Extract and build Redis
 
-  # update-release-hashes:
-  #   needs: test-release-tarball
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Update release hashes
-  #       run: |
-  #         echo "TODO: Implement hash update using utils/releasetools/04_release_hash.sh"
-  #         # This will require:
-  #         # - Access to redis-hashes repository
-  #         # - Git credentials for committing and pushing
+  update-release-hashes:
+    needs: [extract-release-info, create-tarball]
+    runs-on: ubuntu-latest
+    env:
+      TAG_NAME: ${{ needs.extract-release-info.outputs.tag_name }}
+      SHA256: ${{ needs.create-tarball.outputs.sha256 }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Checkout redis-hashes repository
+        uses: actions/checkout@v5
+        with:
+          repository: redis/redis-hashes
+          path: redis-hashes
+          token: ${{ secrets.REDIS_HASHES_TOKEN }}
+
+      - name: Update release hashes
+        env:
+          REDIS_HASHES_PATH: redis-hashes
+        run: ./utils/releasetools/04_release_hash.sh -y "$TAG_NAME"
 
   summary-and-notify:
-    needs: [extract-release-info, create-tarball] # update-release-hashes
+    needs: [extract-release-info, create-tarball, update-release-hashes]
     if: always() && github.repository == 'redis/redis'
     runs-on: ubuntu-latest
     env:

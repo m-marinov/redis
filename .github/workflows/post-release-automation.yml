@@ -128,12 +128,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Generate token for redis-hashes
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_AUTOMATION_APP_ID }}
+          private-key: ${{ secrets.RELEASE_AUTOMATION_APP_PRIVATE_KEY }}
+          repositories: redis-hashes
+          owner: redis
+
       - name: Checkout redis-hashes repository
         uses: actions/checkout@v5
         with:
           repository: redis/redis-hashes
           path: redis-hashes
-          token: ${{ secrets.REDIS_HASHES_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Configure git user for redis-hashes
+        run: |
+          cd redis-hashes
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Update release hashes
         env:

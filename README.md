@@ -8,7 +8,7 @@ This document serves as both a quick start guide to Redis and a detailed resourc
   and [CONTRIBUTING.md](./CONTRIBUTING.md)
 - Looking for detailed documentation? Navigate to [redis.io/docs](https://redis.io/docs/)
 
-## Table of contents
+## Table of contentss
 
 - [What is Redis?](#what-is-redis)
   - [Key use cases](#key-use-cases)
